@@ -1,0 +1,1187 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={BernTweet.R},
+            pdfauthor={Vanessa},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\providecommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+
+  \title{BernTweet.R}
+    \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+    \author{Vanessa}
+    \preauthor{\centering\large\emph}
+  \postauthor{\par}
+      \predate{\centering\large\emph}
+  \postdate{\par}
+    \date{2019-08-06}
+
+
+\begin{document}
+\maketitle
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{## load rtweet package}
+\KeywordTok{library}\NormalTok{(rtweet)}
+\KeywordTok{library}\NormalTok{(stringr)}
+\KeywordTok{library}\NormalTok{(dplyr)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Attaching package: 'dplyr'
+\end{verbatim}
+
+\begin{verbatim}
+## The following objects are masked from 'package:stats':
+## 
+##     filter, lag
+\end{verbatim}
+
+\begin{verbatim}
+## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(tidyverse)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## -- Attaching packages ------------------------------ tidyverse 1.2.1 --
+\end{verbatim}
+
+\begin{verbatim}
+## v ggplot2 3.2.0     v readr   1.3.1
+## v tibble  2.1.3     v purrr   0.3.2
+## v tidyr   0.8.3     v forcats 0.4.0
+\end{verbatim}
+
+\begin{verbatim}
+## -- Conflicts --------------------------------- tidyverse_conflicts() --
+## x dplyr::filter()  masks stats::filter()
+## x purrr::flatten() masks rtweet::flatten()
+## x dplyr::lag()     masks stats::lag()
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(lubridate)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Attaching package: 'lubridate'
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:base':
+## 
+##     date
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(scales)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Attaching package: 'scales'
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:purrr':
+## 
+##     discard
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:readr':
+## 
+##     col_factor
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(tidytext)}
+
+
+\CommentTok{## get user timeline}
+\NormalTok{tmls <-}\StringTok{ }\KeywordTok{get_timelines}\NormalTok{(}\StringTok{'BernieSanders'}\NormalTok{, }\DataTypeTok{n =} \DecValTok{3200}\NormalTok{)}
+\NormalTok{tweets <-}\StringTok{ }\NormalTok{tmls }\OperatorTok{%>%}\StringTok{ }\KeywordTok{select}\NormalTok{(status_id, source, text, created_at) }
+\NormalTok{tweets <-}\StringTok{ }\KeywordTok{mutate}\NormalTok{(tweets,}\DataTypeTok{source =}\KeywordTok{ifelse}\NormalTok{(}\KeywordTok{str_detect}\NormalTok{(tweets}\OperatorTok{$}\NormalTok{source,}\StringTok{'(?<=Twitter )[^.]*'}\NormalTok{)}\OperatorTok{==}\OtherTok{TRUE}\NormalTok{,}\KeywordTok{str_match}\NormalTok{(tweets}\OperatorTok{$}\NormalTok{source, }\StringTok{'(?<=Twitter )[^.]*'}\NormalTok{), tweets}\OperatorTok{$}\NormalTok{source))}
+\NormalTok{tweets}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 3,199 x 4
+##    status_id     source   text                          created_at         
+##    <chr>         <chr>    <chr>                         <dttm>             
+##  1 115893519560~ for iPh~ We announced the rally prett~ 2019-08-07 02:57:37
+##  2 115892181663~ Perisco~ We're bringing our fight for~ 2019-08-07 02:04:27
+##  3 115891449953~ for iPh~ Today marks the 54th anniver~ 2019-08-07 01:35:22
+##  4 115888395364~ Media S~ "\"Cynicism is our biggest e~ 2019-08-06 23:34:00
+##  5 115887441196~ Web App  This Spectrum Strike is STIL~ 2019-08-06 22:56:05
+##  6 115884857939~ Web App  Ban assault weapons.          2019-08-06 21:13:26
+##  7 115883641167~ Web App  "My father was an immigrant ~ 2019-08-06 20:25:05
+##  8 115882738307~ for iPh~ Do you struggle to afford ho~ 2019-08-06 19:49:12
+##  9 115881530539~ Perisco~ Every American should have a~ 2019-08-06 19:01:13
+## 10 115880679772~ Web App  ".@Palms workers voted to un~ 2019-08-06 18:27:24
+## # ... with 3,189 more rows
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{tweets}\OperatorTok{$}\NormalTok{source[tweets}\OperatorTok{$}\NormalTok{source }\OperatorTok{==}\StringTok{ 'for iPad'}\NormalTok{] <-}\StringTok{'iPad'}
+\NormalTok{tweets}\OperatorTok{$}\NormalTok{source[tweets}\OperatorTok{$}\NormalTok{source }\OperatorTok{==}\StringTok{ 'for iPhone'}\NormalTok{] <-}\StringTok{'iPhone'}
+\NormalTok{tweets}\OperatorTok{$}\NormalTok{source[tweets}\OperatorTok{$}\NormalTok{source }\OperatorTok{==}\StringTok{ 'for Android'}\NormalTok{] <-}\StringTok{'Android'}
+\NormalTok{tweets}\OperatorTok{$}\NormalTok{source<-}\StringTok{ }\KeywordTok{gsub}\NormalTok{(}\StringTok{" "}\NormalTok{,}\StringTok{""}\NormalTok{,tweets}\OperatorTok{$}\NormalTok{source)}
+\NormalTok{tweets_count <-tweets }\OperatorTok{%>%}\StringTok{ }\KeywordTok{count}\NormalTok{(source)}
+\NormalTok{tweets_count}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 7 x 2
+##   source           n
+##   <chr>        <int>
+## 1 iPhone         425
+## 2 MediaStudio    339
+## 3 Periscope       92
+## 4 TweetDeck      388
+## 5 VITAppforiOS     2
+## 6 WebApp         110
+## 7 WebClient     1843
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#bar plot}
+\NormalTok{tweets_count }\OperatorTok{%>%}\StringTok{ }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{y =}\NormalTok{n ,}\DataTypeTok{x =}\NormalTok{source, }\DataTypeTok{fill =}\NormalTok{ source)) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_bar}\NormalTok{(}\DataTypeTok{width =} \DecValTok{1}\NormalTok{, }\DataTypeTok{stat =} \StringTok{"identity"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{BernTweet_files/figure-latex/unnamed-chunk-1-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#hourly}
+\NormalTok{tweets }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{count}\NormalTok{(source, }\DataTypeTok{hour=}\KeywordTok{hour}\NormalTok{(}\KeywordTok{with_tz}\NormalTok{(created_at, }\StringTok{"EST"}\NormalTok{)))}\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{percent =}\NormalTok{ n }\OperatorTok{/}\StringTok{ }\KeywordTok{sum}\NormalTok{(n)) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(hour, percent, }\DataTypeTok{color =}\NormalTok{ source)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_line}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_y_continuous}\NormalTok{(}\DataTypeTok{labels =} \KeywordTok{percent_format}\NormalTok{()) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{x =} \StringTok{"Hour of day (EST)"}\NormalTok{,}
+       \DataTypeTok{y =} \StringTok{"% of tweets"}\NormalTok{,}
+       \DataTypeTok{color =} \StringTok{""}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{BernTweet_files/figure-latex/unnamed-chunk-1-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{tweets}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 3,199 x 4
+##    status_id     source   text                          created_at         
+##    <chr>         <chr>    <chr>                         <dttm>             
+##  1 115893519560~ iPhone   We announced the rally prett~ 2019-08-07 02:57:37
+##  2 115892181663~ Perisco~ We're bringing our fight for~ 2019-08-07 02:04:27
+##  3 115891449953~ iPhone   Today marks the 54th anniver~ 2019-08-07 01:35:22
+##  4 115888395364~ MediaSt~ "\"Cynicism is our biggest e~ 2019-08-06 23:34:00
+##  5 115887441196~ WebApp   This Spectrum Strike is STIL~ 2019-08-06 22:56:05
+##  6 115884857939~ WebApp   Ban assault weapons.          2019-08-06 21:13:26
+##  7 115883641167~ WebApp   "My father was an immigrant ~ 2019-08-06 20:25:05
+##  8 115882738307~ iPhone   Do you struggle to afford ho~ 2019-08-06 19:49:12
+##  9 115881530539~ Perisco~ Every American should have a~ 2019-08-06 19:01:13
+## 10 115880679772~ WebApp   ".@Palms workers voted to un~ 2019-08-06 18:27:24
+## # ... with 3,189 more rows
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#quotes}
+\NormalTok{tweet_picture_counts <-}\StringTok{ }\NormalTok{tweets }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{filter}\NormalTok{(}\OperatorTok{!}\KeywordTok{str_detect}\NormalTok{(text, }\StringTok{'^"'}\NormalTok{)) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{count}\NormalTok{(}
+\NormalTok{    source, }
+    \DataTypeTok{picture =} \KeywordTok{ifelse}\NormalTok{(}
+      \KeywordTok{str_detect}\NormalTok{(text, }\StringTok{"t.co"}\NormalTok{),}\StringTok{"Picture/link"}\NormalTok{, }\StringTok{"No picture/link"}\NormalTok{))}
+
+\KeywordTok{ggplot}\NormalTok{(tweet_picture_counts, }\KeywordTok{aes}\NormalTok{(source, n, }\DataTypeTok{fill =}\NormalTok{ picture)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_bar}\NormalTok{(}\DataTypeTok{stat =} \StringTok{"identity"}\NormalTok{, }\DataTypeTok{position =} \StringTok{"dodge"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{x =} \StringTok{""}\NormalTok{, }\DataTypeTok{y =} \StringTok{"Number of tweets"}\NormalTok{, }\DataTypeTok{fill =} \StringTok{""}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{BernTweet_files/figure-latex/unnamed-chunk-1-3.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#word sentiment}
+\CommentTok{##separate into individual tokens}
+\NormalTok{reg <-}\StringTok{ "([^A-Za-z}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{d#@']|'(?![A-Za-z}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{d#@]))"}
+\NormalTok{tweet_words <-}\StringTok{ }\NormalTok{tweets }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{filter}\NormalTok{(}\OperatorTok{!}\KeywordTok{str_detect}\NormalTok{(text, }\StringTok{'^"'}\NormalTok{)) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{text =} \KeywordTok{str_replace_all}\NormalTok{(text, }\StringTok{"https://t.co/[A-Za-z}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{d]+|&amp;"}\NormalTok{, }\StringTok{""}\NormalTok{)) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{unnest_tokens}\NormalTok{(word, text, }\DataTypeTok{token =} \StringTok{"regex"}\NormalTok{, }\DataTypeTok{pattern =}\NormalTok{ reg) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{filter}\NormalTok{(}\OperatorTok{!}\NormalTok{word }\OperatorTok{%in%}\StringTok{ }\NormalTok{stop_words}\OperatorTok{$}\NormalTok{word,}
+         \KeywordTok{str_detect}\NormalTok{(word, }\StringTok{"[a-z]"}\NormalTok{))}
+\NormalTok{tweet_words}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 43,678 x 4
+##    status_id           source    created_at          word      
+##    <chr>               <chr>     <dttm>              <chr>     
+##  1 1018562246568488960 WebClient 2018-07-15 18:25:38 sara      
+##  2 1018562246568488960 WebClient 2018-07-15 18:25:38 innamarato
+##  3 1018562246568488960 WebClient 2018-07-15 18:25:38 speaker   
+##  4 1018562246568488960 WebClient 2018-07-15 18:25:38 bernie    
+##  5 1018562246568488960 WebClient 2018-07-15 18:25:38 sanders   
+##  6 1018562246568488960 WebClient 2018-07-15 18:25:38 rally     
+##  7 1018562246568488960 WebClient 2018-07-15 18:25:38 unseated  
+##  8 1018562246568488960 WebClient 2018-07-15 18:25:38 yr        
+##  9 1018562246568488960 WebClient 2018-07-15 18:25:38 incumbent 
+## 10 1018564573119614976 WebClient 2018-07-15 18:34:52 bernie    
+## # ... with 43,668 more rows
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{common_words <-}\StringTok{ }\NormalTok{tweet_words }\OperatorTok{%>%}\StringTok{ }\KeywordTok{count}\NormalTok{(word, }\DataTypeTok{sort=}\OtherTok{TRUE}\NormalTok{) }\OperatorTok{%>%}\StringTok{ }\KeywordTok{head}\NormalTok{(.,}\DecValTok{45}\NormalTok{)}
+\NormalTok{common_words }\OperatorTok{%>%}\StringTok{ }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{y =}\NormalTok{n ,}\DataTypeTok{x =}\KeywordTok{reorder}\NormalTok{(word,}\OperatorTok{+}\NormalTok{n))) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_bar}\NormalTok{(}\DataTypeTok{width =} \FloatTok{0.7}\NormalTok{, }\DataTypeTok{stat =} \StringTok{"identity"}\NormalTok{) }\OperatorTok{+}\StringTok{ }\KeywordTok{coord_flip}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{BernTweet_files/figure-latex/unnamed-chunk-1-4.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{tweet_words }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{count}\NormalTok{(word, }\DataTypeTok{sort =} \OtherTok{TRUE}\NormalTok{) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{head}\NormalTok{(}\DecValTok{20}\NormalTok{) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{word =} \KeywordTok{reorder}\NormalTok{(word, n)) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(word, n)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_bar}\NormalTok{(}\DataTypeTok{stat =} \StringTok{"identity"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{ylab}\NormalTok{(}\StringTok{"Occurrences"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{coord_flip}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{BernTweet_files/figure-latex/unnamed-chunk-1-5.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{tweet_words_count <-}\StringTok{ }\NormalTok{tweet_words }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{count}\NormalTok{(source, word, }\DataTypeTok{sort =} \OtherTok{TRUE}\NormalTok{) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{ungroup}\NormalTok{()}
+\NormalTok{tweet_words_count}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 12,094 x 3
+##    source    word               n
+##    <chr>     <chr>          <int>
+##  1 WebClient people           408
+##  2 WebClient @berniesanders   269
+##  3 WebClient country          259
+##  4 WebClient workers          216
+##  5 WebClient health           213
+##  6 WebClient care             186
+##  7 WebClient trump            185
+##  8 WebClient vote             146
+##  9 WebClient stand            143
+## 10 WebClient medicare         137
+## # ... with 12,084 more rows
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{total_words <-}\StringTok{ }\NormalTok{tweet_words_count }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(source) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{summarize}\NormalTok{(}\DataTypeTok{total =} \KeywordTok{sum}\NormalTok{(n))}
+\NormalTok{total_words}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 7 x 2
+##   source       total
+##   <chr>        <int>
+## 1 iPhone        5692
+## 2 MediaStudio   4035
+## 3 Periscope      967
+## 4 TweetDeck     5324
+## 5 VITAppforiOS    23
+## 6 WebApp        1525
+## 7 WebClient    26112
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{tweet_words_count <-}\StringTok{ }\KeywordTok{left_join}\NormalTok{(tweet_words_count, total_words)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Joining, by = "source"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{tweet_words_count}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 12,094 x 4
+##    source    word               n total
+##    <chr>     <chr>          <int> <int>
+##  1 WebClient people           408 26112
+##  2 WebClient @berniesanders   269 26112
+##  3 WebClient country          259 26112
+##  4 WebClient workers          216 26112
+##  5 WebClient health           213 26112
+##  6 WebClient care             186 26112
+##  7 WebClient trump            185 26112
+##  8 WebClient vote             146 26112
+##  9 WebClient stand            143 26112
+## 10 WebClient medicare         137 26112
+## # ... with 12,084 more rows
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{tweet_words_count <-}\StringTok{ }\NormalTok{tweet_words_count }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{bind_tf_idf}\NormalTok{(word, source, n)}
+\NormalTok{tweet_words_count}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 12,094 x 7
+##    source    word               n total      tf   idf   tf_idf
+##    <chr>     <chr>          <int> <int>   <dbl> <dbl>    <dbl>
+##  1 WebClient people           408 26112 0.0156  0.154 0.00241 
+##  2 WebClient @berniesanders   269 26112 0.0103  0.560 0.00577 
+##  3 WebClient country          259 26112 0.00992 0.154 0.00153 
+##  4 WebClient workers          216 26112 0.00827 0.154 0.00128 
+##  5 WebClient health           213 26112 0.00816 0.154 0.00126 
+##  6 WebClient care             186 26112 0.00712 0.154 0.00110 
+##  7 WebClient trump            185 26112 0.00708 0.154 0.00109 
+##  8 WebClient vote             146 26112 0.00559 0.336 0.00188 
+##  9 WebClient stand            143 26112 0.00548 0.154 0.000844
+## 10 WebClient medicare         137 26112 0.00525 0.154 0.000809
+## # ... with 12,084 more rows
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{tweet_words_count }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{select}\NormalTok{(}\OperatorTok{-}\NormalTok{total) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{arrange}\NormalTok{(}\KeywordTok{desc}\NormalTok{(tf_idf))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 12,094 x 6
+##    source       word            n     tf   idf tf_idf
+##    <chr>        <chr>       <int>  <dbl> <dbl>  <dbl>
+##  1 VITAppforiOS #demdebate2     1 0.0435 0.560 0.0243
+##  2 VITAppforiOS complex         1 0.0435 0.560 0.0243
+##  3 VITAppforiOS don             1 0.0435 0.560 0.0243
+##  4 VITAppforiOS industrial      1 0.0435 0.560 0.0243
+##  5 VITAppforiOS donation        1 0.0435 0.336 0.0146
+##  6 VITAppforiOS finally         1 0.0435 0.336 0.0146
+##  7 VITAppforiOS funding         1 0.0435 0.336 0.0146
+##  8 VITAppforiOS guts            1 0.0435 0.336 0.0146
+##  9 VITAppforiOS military        1 0.0435 0.336 0.0146
+## 10 VITAppforiOS wall            1 0.0435 0.336 0.0146
+## # ... with 12,084 more rows
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{tweet_important <-}\StringTok{ }\NormalTok{tweet_words_count }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{arrange}\NormalTok{(}\KeywordTok{desc}\NormalTok{(tf_idf)) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{word =} \KeywordTok{factor}\NormalTok{(word, }\DataTypeTok{levels =} \KeywordTok{rev}\NormalTok{(}\KeywordTok{unique}\NormalTok{(word))))}
+\NormalTok{tweet_important}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 12,094 x 7
+##    source       word            n total     tf   idf tf_idf
+##    <chr>        <fct>       <int> <int>  <dbl> <dbl>  <dbl>
+##  1 VITAppforiOS #demdebate2     1    23 0.0435 0.560 0.0243
+##  2 VITAppforiOS complex         1    23 0.0435 0.560 0.0243
+##  3 VITAppforiOS don             1    23 0.0435 0.560 0.0243
+##  4 VITAppforiOS industrial      1    23 0.0435 0.560 0.0243
+##  5 VITAppforiOS donation        1    23 0.0435 0.336 0.0146
+##  6 VITAppforiOS finally         1    23 0.0435 0.336 0.0146
+##  7 VITAppforiOS funding         1    23 0.0435 0.336 0.0146
+##  8 VITAppforiOS guts            1    23 0.0435 0.336 0.0146
+##  9 VITAppforiOS military        1    23 0.0435 0.336 0.0146
+## 10 VITAppforiOS wall            1    23 0.0435 0.336 0.0146
+## # ... with 12,084 more rows
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{tweet_important }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{head}\NormalTok{(}\DecValTok{50}\NormalTok{)}\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(source) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{slice}\NormalTok{(}\DecValTok{1}\OperatorTok{:}\DecValTok{15}\NormalTok{) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(word, tf_idf, }\DataTypeTok{fill =}\NormalTok{ source)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_bar}\NormalTok{(}\DataTypeTok{alpha =} \FloatTok{0.8}\NormalTok{, }\DataTypeTok{stat =} \StringTok{"identity"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{title =} \StringTok{"Highest tf-idf words in @BernieSanders"}\NormalTok{,}
+       \DataTypeTok{subtitle =} \StringTok{"Top 15 "}\NormalTok{,}
+       \DataTypeTok{x =} \OtherTok{NULL}\NormalTok{, }\DataTypeTok{y =} \StringTok{"tf-idf"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{coord_flip}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{BernTweet_files/figure-latex/unnamed-chunk-1-6.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#tweet ratios}
+\NormalTok{tweet_ratios <-}\StringTok{ }\NormalTok{tweet_words }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{count}\NormalTok{(word, source) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{filter}\NormalTok{(}\KeywordTok{sum}\NormalTok{(n) }\OperatorTok{>=}\StringTok{ }\DecValTok{5}\NormalTok{) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{spread}\NormalTok{(source, n, }\DataTypeTok{fill =} \DecValTok{0}\NormalTok{) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{ungroup}\NormalTok{() }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{mutate_each}\NormalTok{(}\KeywordTok{funs}\NormalTok{((. }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{) }\OperatorTok{/}\StringTok{ }\KeywordTok{sum}\NormalTok{(. }\OperatorTok{+}\StringTok{ }\DecValTok{1}\NormalTok{)), }\OperatorTok{-}\NormalTok{word) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{logratio =} \KeywordTok{log2}\NormalTok{(iPhone}\OperatorTok{/}\NormalTok{WebClient)) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: funs() is soft deprecated as of dplyr 0.8.0
+## Please use a list of either functions or lambdas: 
+## 
+##   # Simple named list: 
+##   list(mean = mean, median = median)
+## 
+##   # Auto named with `tibble::lst()`: 
+##   tibble::lst(mean, median)
+## 
+##   # Using lambdas
+##   list(~ mean(., trim = .2), ~ median(., na.rm = TRUE))
+## This warning is displayed once per session.
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{tweet_ratios}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 6,581 x 9
+##    word   iPhone MediaStudio Periscope TweetDeck VITAppforiOS  WebApp
+##    <chr>   <dbl>       <dbl>     <dbl>     <dbl>        <dbl>   <dbl>
+##  1 'em   1.63e-4   0.0000942  0.000132 0.0000840     0.000151 1.23e-4
+##  2 'mid~ 8.15e-5   0.0000942  0.000132 0.0000840     0.000151 1.23e-4
+##  3 'mon~ 8.15e-5   0.0000942  0.000132 0.0000840     0.000151 1.23e-4
+##  4 'pay  8.15e-5   0.0000942  0.000132 0.0000840     0.000151 1.23e-4
+##  5 'pol~ 8.15e-5   0.0000942  0.000132 0.0000840     0.000151 1.23e-4
+##  6 'roa~ 8.15e-5   0.0000942  0.000132 0.0000840     0.000151 1.23e-4
+##  7 's    1.63e-4   0.0000942  0.000132 0.0000840     0.000151 1.23e-4
+##  8 'vote 8.15e-5   0.0000942  0.000132 0.0000840     0.000151 1.23e-4
+##  9 #1job 8.15e-5   0.0000942  0.000132 0.0000840     0.000151 2.47e-4
+## 10 #1u   2.44e-4   0.0000942  0.000132 0.0000840     0.000151 1.23e-4
+## # ... with 6,571 more rows, and 2 more variables: WebClient <dbl>,
+## #   logratio <dbl>
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{tweet_ratios }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(logratio }\OperatorTok{>}\StringTok{ }\DecValTok{0}\NormalTok{) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{top_n}\NormalTok{(}\DecValTok{15}\NormalTok{, }\KeywordTok{abs}\NormalTok{(logratio)) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{ungroup}\NormalTok{() }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{word =} \KeywordTok{reorder}\NormalTok{(word, logratio)) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(word, logratio, }\DataTypeTok{fill =}\NormalTok{ logratio }\OperatorTok{<}\StringTok{ }\DecValTok{0}\NormalTok{)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_bar}\NormalTok{(}\DataTypeTok{stat =} \StringTok{"identity"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{coord_flip}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{ylab}\NormalTok{(}\StringTok{"iPhone / Web Client log ratio"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_fill_manual}\NormalTok{(}\DataTypeTok{name =} \StringTok{""}\NormalTok{, }\DataTypeTok{labels =} \KeywordTok{c}\NormalTok{(}\StringTok{"WebClient"}\NormalTok{, }\StringTok{"iPhone"}\NormalTok{),}
+                    \DataTypeTok{values =} \KeywordTok{c}\NormalTok{(}\StringTok{"red"}\NormalTok{, }\StringTok{"lightblue"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{BernTweet_files/figure-latex/unnamed-chunk-1-7.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#analysis}
+\NormalTok{sources <-}\StringTok{ }\NormalTok{tweet_words }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(source) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{total_words =} \KeywordTok{n}\NormalTok{()) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{ungroup}\NormalTok{() }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{distinct}\NormalTok{(status_id, source, total_words)}
+
+\NormalTok{sources[}\KeywordTok{order}\NormalTok{(sources}\OperatorTok{$}\NormalTok{total_words, }\DataTypeTok{decreasing =} \OtherTok{TRUE}\NormalTok{),]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 3,101 x 3
+##    status_id           source    total_words
+##    <chr>               <chr>           <int>
+##  1 1018562246568488960 WebClient       26112
+##  2 1018564573119614976 WebClient       26112
+##  3 1018566976745111553 WebClient       26112
+##  4 1018567101043396608 WebClient       26112
+##  5 1018623057588637697 WebClient       26112
+##  6 1018624682134827011 WebClient       26112
+##  7 1018652048819216384 WebClient       26112
+##  8 1018904359042715648 WebClient       26112
+##  9 1018904891560026114 WebClient       26112
+## 10 1018905316589756418 WebClient       26112
+## # ... with 3,091 more rows
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{tweet_words }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(source)}\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{total_words =} \KeywordTok{n}\NormalTok{())}\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{ungroup}\NormalTok{() }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{distinct}\NormalTok{(status_id, source, total_words) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 3,101 x 3
+##    status_id           source    total_words
+##    <chr>               <chr>           <int>
+##  1 1018562246568488960 WebClient       26112
+##  2 1018564573119614976 WebClient       26112
+##  3 1018566976745111553 WebClient       26112
+##  4 1018567101043396608 WebClient       26112
+##  5 1018583898421424129 iPhone           5692
+##  6 1018623057588637697 WebClient       26112
+##  7 1018624682134827011 WebClient       26112
+##  8 1018652048819216384 WebClient       26112
+##  9 1018904359042715648 WebClient       26112
+## 10 1018904891560026114 WebClient       26112
+## # ... with 3,091 more rows
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#website down, download from http://saifmohammad.com/Lexicons/}
+\CommentTok{### eight emotion (anger, fear, anticipation, trust, surprise, sadness,}
+\CommentTok{### joy, and disgust) and two sentiment (negative and positive)}
+
+\NormalTok{wd <-}\StringTok{ "C:}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{Users}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{vanea}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{Desktop}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{Projects}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{Twitter}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{DrumpfTweet"}
+\NormalTok{emolex <-}\StringTok{ }\KeywordTok{read_table2}\NormalTok{(}
+  \KeywordTok{file.path}\NormalTok{(wd,}\StringTok{"NRC-emotion-lexicon-wordlevel-alphabetized-v0.92.txt"}\NormalTok{),}
+  \DataTypeTok{col_names =} \OtherTok{FALSE}\NormalTok{,}
+  \DataTypeTok{skip =} \DecValTok{45}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Parsed with column specification:
+## cols(
+##   X1 = col_character(),
+##   X2 = col_character(),
+##   X3 = col_double()
+## )
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{colnames}\NormalTok{(emolex) <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"word"}\NormalTok{, }\StringTok{"emotion"}\NormalTok{, }\StringTok{"value"}\NormalTok{)}
+\CommentTok{# remove values with 0}
+\NormalTok{emolex <-}\StringTok{ }\NormalTok{emolex }\OperatorTok{%>%}\StringTok{  }\KeywordTok{filter}\NormalTok{(value }\OperatorTok{>}\StringTok{ }\DecValTok{0}\NormalTok{)}
+
+\NormalTok{nrc <-emolex }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{select}\NormalTok{(word, emotion)}
+
+
+\CommentTok{#hourly}
+\NormalTok{tweet_words }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{inner_join}\NormalTok{(nrc, }\DataTypeTok{by =} \StringTok{"word"}\NormalTok{)}\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{count}\NormalTok{(emotion, }\DataTypeTok{hour=}\KeywordTok{hour}\NormalTok{(}\KeywordTok{with_tz}\NormalTok{(created_at, }\StringTok{"EST"}\NormalTok{))) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{percent =}\NormalTok{ n }\OperatorTok{/}\StringTok{ }\KeywordTok{sum}\NormalTok{(n)) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(hour, percent, }\DataTypeTok{color =}\NormalTok{ emotion)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_line}\NormalTok{() }\OperatorTok{+}\StringTok{ }\KeywordTok{geom_path}\NormalTok{(}\DataTypeTok{size =} \DecValTok{1}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_y_continuous}\NormalTok{(}\DataTypeTok{labels =} \KeywordTok{percent_format}\NormalTok{()) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{x =} \StringTok{"Hour of day (EST)"}\NormalTok{,}
+       \DataTypeTok{y =} \StringTok{"% of tweets"}\NormalTok{,}
+       \DataTypeTok{color =} \StringTok{""}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{BernTweet_files/figure-latex/unnamed-chunk-1-8.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#weekly}
+\NormalTok{tweet_words }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{inner_join}\NormalTok{(nrc, }\DataTypeTok{by =} \StringTok{"word"}\NormalTok{)}\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{count}\NormalTok{(emotion, }\DataTypeTok{week=}\KeywordTok{week}\NormalTok{(}\KeywordTok{with_tz}\NormalTok{(created_at, }\StringTok{"EST"}\NormalTok{))) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{percent =}\NormalTok{ n }\OperatorTok{/}\StringTok{ }\KeywordTok{sum}\NormalTok{(n)) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(week, percent, }\DataTypeTok{color =}\NormalTok{ emotion)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_line}\NormalTok{() }\OperatorTok{+}\StringTok{ }\KeywordTok{geom_path}\NormalTok{(}\DataTypeTok{size =} \DecValTok{1}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_y_continuous}\NormalTok{(}\DataTypeTok{labels =} \KeywordTok{percent_format}\NormalTok{()) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{x =} \StringTok{"Week (EST)"}\NormalTok{,}
+       \DataTypeTok{y =} \StringTok{"% of tweets"}\NormalTok{,}
+       \DataTypeTok{color =} \StringTok{""}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{BernTweet_files/figure-latex/unnamed-chunk-1-9.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#monthly}
+\NormalTok{tweet_words }\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{inner_join}\NormalTok{(nrc, }\DataTypeTok{by =} \StringTok{"word"}\NormalTok{)}\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{count}\NormalTok{(emotion, }\DataTypeTok{month=}\KeywordTok{month}\NormalTok{(}\KeywordTok{with_tz}\NormalTok{(created_at, }\StringTok{"EST"}\NormalTok{))) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{percent =}\NormalTok{ n }\OperatorTok{/}\StringTok{ }\KeywordTok{sum}\NormalTok{(n)) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(month, percent, }\DataTypeTok{color =}\NormalTok{ emotion)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_line}\NormalTok{() }\OperatorTok{+}\KeywordTok{geom_path}\NormalTok{(}\DataTypeTok{size =} \DecValTok{1}\NormalTok{)}\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_y_continuous}\NormalTok{(}\DataTypeTok{labels =} \KeywordTok{percent_format}\NormalTok{()) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{x =} \StringTok{"Monthly (EST)"}\NormalTok{,}
+       \DataTypeTok{y =} \StringTok{"% of tweets"}\NormalTok{,}
+       \DataTypeTok{color =} \StringTok{""}\NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{BernTweet_files/figure-latex/unnamed-chunk-1-10.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{tweet_words}\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{inner_join}\NormalTok{(nrc, }\DataTypeTok{by =} \StringTok{"word"}\NormalTok{)  }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{count}\NormalTok{(emotion, }\DataTypeTok{month=}\KeywordTok{date}\NormalTok{(created_at))}\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{percent =}\NormalTok{ n }\OperatorTok{/}\StringTok{ }\KeywordTok{sum}\NormalTok{(n)) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(month, percent, }\DataTypeTok{color =}\NormalTok{ emotion)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_line}\NormalTok{() }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_y_continuous}\NormalTok{(}\DataTypeTok{labels =} \KeywordTok{percent_format}\NormalTok{()) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{x =} \StringTok{"Monthly (EST)"}\NormalTok{,}
+       \DataTypeTok{y =} \StringTok{"% of tweets"}\NormalTok{,}
+       \DataTypeTok{color =} \StringTok{""}\NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{BernTweet_files/figure-latex/unnamed-chunk-1-11.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{tweet_words}\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{inner_join}\NormalTok{(nrc, }\DataTypeTok{by =} \StringTok{"word"}\NormalTok{)  }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{count}\NormalTok{(emotion, }\DataTypeTok{month=}\KeywordTok{date}\NormalTok{(created_at))}\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{percent =}\NormalTok{ n }\OperatorTok{/}\StringTok{ }\KeywordTok{sum}\NormalTok{(n)) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(}\DataTypeTok{y=}\NormalTok{percent ,}\DataTypeTok{x =}\NormalTok{emotion, }\DataTypeTok{fill=}\NormalTok{month)) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_bar}\NormalTok{(}\DataTypeTok{width =} \FloatTok{0.7}\NormalTok{, }\DataTypeTok{stat =} \StringTok{"identity"}\NormalTok{) }\OperatorTok{+}\StringTok{ }\KeywordTok{coord_flip}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{BernTweet_files/figure-latex/unnamed-chunk-1-12.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{by_source_sentiment <-}\StringTok{ }\NormalTok{tweet_words }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{inner_join}\NormalTok{(nrc, }\DataTypeTok{by =} \StringTok{"word"}\NormalTok{) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{count}\NormalTok{(emotion, status_id) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{ungroup}\NormalTok{() }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{complete}\NormalTok{(emotion, status_id, }\DataTypeTok{fill =} \KeywordTok{list}\NormalTok{(}\DataTypeTok{n =} \DecValTok{0}\NormalTok{)) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{inner_join}\NormalTok{(sources, }\StringTok{"status_id"}\NormalTok{) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(source, emotion, total_words) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{summarize}\NormalTok{(}\DataTypeTok{words =} \KeywordTok{sum}\NormalTok{(n)) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{ungroup}\NormalTok{()}
+
+\KeywordTok{head}\NormalTok{(by_source_sentiment)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 6 x 4
+##   source emotion      total_words words
+##   <chr>  <chr>              <int> <dbl>
+## 1 iPhone anger               5692   288
+## 2 iPhone anticipation        5692   332
+## 3 iPhone disgust             5692   140
+## 4 iPhone fear                5692   341
+## 5 iPhone joy                 5692   264
+## 6 iPhone negative            5692   520
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{by_source_sentiment }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(source, words,}\DataTypeTok{fill=}\NormalTok{emotion)) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_bar}\NormalTok{(}\DataTypeTok{width =} \FloatTok{0.7}\NormalTok{, }\DataTypeTok{stat =} \StringTok{"identity"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{axis.text.x =} \KeywordTok{element_text}\NormalTok{(}\DataTypeTok{angle =} \DecValTok{90}\NormalTok{, }\DataTypeTok{hjust =} \DecValTok{1}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{BernTweet_files/figure-latex/unnamed-chunk-1-13.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{by_source_sentiment }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(emotion, words,}\DataTypeTok{fill=}\NormalTok{source)) }\OperatorTok{+}\StringTok{ }
+\StringTok{  }\KeywordTok{geom_bar}\NormalTok{(}\DataTypeTok{width =} \FloatTok{0.7}\NormalTok{, }\DataTypeTok{stat =} \StringTok{"identity"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{axis.text.x =} \KeywordTok{element_text}\NormalTok{(}\DataTypeTok{angle =} \DecValTok{90}\NormalTok{, }\DataTypeTok{hjust =} \DecValTok{1}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{BernTweet_files/figure-latex/unnamed-chunk-1-14.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{tweet_ratios }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{inner_join}\NormalTok{(nrc, }\DataTypeTok{by =} \StringTok{"word"}\NormalTok{) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{filter}\NormalTok{(}\OperatorTok{!}\NormalTok{emotion }\OperatorTok{%in%}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"positive"}\NormalTok{, }\StringTok{"negative"}\NormalTok{)) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{emotion =} \KeywordTok{reorder}\NormalTok{(emotion, }\OperatorTok{-}\NormalTok{logratio),}
+         \DataTypeTok{word =} \KeywordTok{reorder}\NormalTok{(word, }\OperatorTok{-}\NormalTok{logratio))}\OperatorTok{%>%}\StringTok{ }
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(emotion) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{top_n}\NormalTok{(}\DecValTok{10}\NormalTok{, }\KeywordTok{abs}\NormalTok{(logratio))}\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{ungroup}\NormalTok{() }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(word, logratio, }\DataTypeTok{fill =}\NormalTok{ logratio }\OperatorTok{<}\StringTok{ }\DecValTok{0}\NormalTok{)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{facet_wrap}\NormalTok{(}\OperatorTok{~}\StringTok{ }\NormalTok{emotion, }\DataTypeTok{scales =} \StringTok{"free"}\NormalTok{, }\DataTypeTok{nrow =} \DecValTok{2}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_bar}\NormalTok{(}\DataTypeTok{stat =} \StringTok{"identity"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{axis.text.x =} \KeywordTok{element_text}\NormalTok{(}\DataTypeTok{angle =} \DecValTok{90}\NormalTok{, }\DataTypeTok{hjust =} \DecValTok{1}\NormalTok{)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{x =} \StringTok{""}\NormalTok{, }\DataTypeTok{y =} \StringTok{"Android / iPhone log ratio"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_fill_manual}\NormalTok{(}\DataTypeTok{name =} \StringTok{""}\NormalTok{, }\DataTypeTok{labels =} \KeywordTok{c}\NormalTok{(}\StringTok{"WebClient"}\NormalTok{, }\StringTok{"iPhone"}\NormalTok{),}
+                    \DataTypeTok{values =} \KeywordTok{c}\NormalTok{(}\StringTok{"red"}\NormalTok{, }\StringTok{"lightblue"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{BernTweet_files/figure-latex/unnamed-chunk-1-15.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{tweet_important }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{inner_join}\NormalTok{(nrc, }\DataTypeTok{by =} \StringTok{"word"}\NormalTok{) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{filter}\NormalTok{(}\OperatorTok{!}\NormalTok{emotion }\OperatorTok{%in%}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"positive"}\NormalTok{, }\StringTok{"negative"}\NormalTok{)) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{emotion =} \KeywordTok{reorder}\NormalTok{(emotion, }\OperatorTok{-}\NormalTok{tf_idf),}
+         \DataTypeTok{word =} \KeywordTok{reorder}\NormalTok{(word, }\OperatorTok{-}\NormalTok{tf_idf)) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(emotion) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{top_n}\NormalTok{(}\DecValTok{10}\NormalTok{, tf_idf) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{ungroup}\NormalTok{() }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(word, tf_idf, }\DataTypeTok{fill =}\NormalTok{ source)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{facet_wrap}\NormalTok{(}\OperatorTok{~}\StringTok{ }\NormalTok{emotion, }\DataTypeTok{scales =} \StringTok{"free"}\NormalTok{, }\DataTypeTok{nrow =} \DecValTok{4}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_bar}\NormalTok{(}\DataTypeTok{stat =} \StringTok{"identity"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{axis.text.x =} \KeywordTok{element_text}\NormalTok{(}\DataTypeTok{angle =} \DecValTok{90}\NormalTok{, }\DataTypeTok{hjust =} \DecValTok{1}\NormalTok{)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{x =} \StringTok{""}\NormalTok{, }\DataTypeTok{y =} \StringTok{"tf-idf"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_fill_manual}\NormalTok{(}\DataTypeTok{name =} \StringTok{""}\NormalTok{, }\DataTypeTok{labels =} \KeywordTok{c}\NormalTok{(}\StringTok{"WebClient"}\NormalTok{, }\StringTok{"iPhone"}\NormalTok{,}\StringTok{'MediaStudio'}\NormalTok{,}
+                          \StringTok{'Periscope'}\NormalTok{, }\StringTok{'TweetDeck'}\NormalTok{,}\StringTok{'VITAppforiOS'}\NormalTok{,}\StringTok{'WebApp'}\NormalTok{),}
+                    \DataTypeTok{values =} \KeywordTok{c}\NormalTok{(}\StringTok{"red"}\NormalTok{, }\StringTok{"lightblue"}\NormalTok{,}\StringTok{"pink"}\NormalTok{, }\StringTok{"purple"}\NormalTok{, }\StringTok{"orange"}\NormalTok{, }\StringTok{'yellow'}\NormalTok{, }\StringTok{"blue"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: Column `word` joining factor and character vector, coercing into
+## character vector
+\end{verbatim}
+
+\includegraphics{BernTweet_files/figure-latex/unnamed-chunk-1-16.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{tweet_important }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{inner_join}\NormalTok{(nrc, }\DataTypeTok{by =} \StringTok{"word"}\NormalTok{) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{filter}\NormalTok{(}\OperatorTok{!}\NormalTok{emotion }\OperatorTok{%in%}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"positive"}\NormalTok{, }\StringTok{"negative"}\NormalTok{)) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{filter}\NormalTok{(source }\OperatorTok{%in%}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"WebClient"}\NormalTok{, }\StringTok{"iPhone"}\NormalTok{)) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{emotion =} \KeywordTok{reorder}\NormalTok{(emotion, }\OperatorTok{-}\NormalTok{tf_idf),}
+         \DataTypeTok{word =} \KeywordTok{reorder}\NormalTok{(word, }\OperatorTok{-}\NormalTok{tf_idf)) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{group_by}\NormalTok{(emotion) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{top_n}\NormalTok{(}\DecValTok{10}\NormalTok{, tf_idf) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{ungroup}\NormalTok{() }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{ggplot}\NormalTok{(}\KeywordTok{aes}\NormalTok{(word, tf_idf, }\DataTypeTok{fill =}\NormalTok{ source)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{facet_wrap}\NormalTok{(}\OperatorTok{~}\StringTok{ }\NormalTok{emotion, }\DataTypeTok{scales =} \StringTok{"free"}\NormalTok{, }\DataTypeTok{nrow =} \DecValTok{4}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{geom_bar}\NormalTok{(}\DataTypeTok{stat =} \StringTok{"identity"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{theme}\NormalTok{(}\DataTypeTok{axis.text.x =} \KeywordTok{element_text}\NormalTok{(}\DataTypeTok{angle =} \DecValTok{90}\NormalTok{, }\DataTypeTok{hjust =} \DecValTok{1}\NormalTok{)) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{labs}\NormalTok{(}\DataTypeTok{x =} \StringTok{""}\NormalTok{, }\DataTypeTok{y =} \StringTok{"tf-idf"}\NormalTok{) }\OperatorTok{+}
+\StringTok{  }\KeywordTok{scale_fill_manual}\NormalTok{(}\DataTypeTok{name =} \StringTok{""}\NormalTok{, }\DataTypeTok{labels =} \KeywordTok{c}\NormalTok{(}\StringTok{"WebClient"}\NormalTok{, }\StringTok{"iPhone"}\NormalTok{),}
+                    \DataTypeTok{values =} \KeywordTok{c}\NormalTok{(}\StringTok{"red"}\NormalTok{, }\StringTok{"lightblue"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: Column `word` joining factor and character vector, coercing into
+## character vector
+\end{verbatim}
+
+\includegraphics{BernTweet_files/figure-latex/unnamed-chunk-1-17.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{#library(broom)}
+
+\CommentTok{#compare}
+\KeywordTok{library}\NormalTok{(reshape2)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Attaching package: 'reshape2'
+\end{verbatim}
+
+\begin{verbatim}
+## The following object is masked from 'package:tidyr':
+## 
+##     smiths
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(wordcloud)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Loading required package: RColorBrewer
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{donfrump <-}\StringTok{ }\KeywordTok{get_timelines}\NormalTok{(}\StringTok{'realDonaldTrump'}\NormalTok{, }\DataTypeTok{n =} \DecValTok{3200}\NormalTok{)}
+\NormalTok{dft <-}\StringTok{ }\NormalTok{donfrump }\OperatorTok{%>%}\StringTok{ }\KeywordTok{select}\NormalTok{(status_id, source, text, created_at) }
+\NormalTok{dft <-}\StringTok{ }\KeywordTok{mutate}\NormalTok{(dft,}\DataTypeTok{source =}\KeywordTok{ifelse}\NormalTok{(}\KeywordTok{str_detect}\NormalTok{(dft}\OperatorTok{$}\NormalTok{source,}\StringTok{'(?<=Twitter )[^.]*'}\NormalTok{)}\OperatorTok{==}\OtherTok{TRUE}\NormalTok{,}\KeywordTok{str_match}\NormalTok{(dft}\OperatorTok{$}\NormalTok{source, }\StringTok{'(?<=Twitter )[^.]*'}\NormalTok{), dft}\OperatorTok{$}\NormalTok{source))}
+\NormalTok{dft}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 3,191 x 4
+##    status_id     source   text                          created_at         
+##    <chr>         <chr>    <chr>                         <dttm>             
+##  1 115895019656~ for iPh~ Beto (phony name to indicate~ 2019-08-07 03:57:13
+##  2 115894621901~ for iPh~ ....Amendment.” John Yoo. @I~ 2019-08-07 03:41:25
+##  3 115894621775~ for iPh~ “California is trying to med~ 2019-08-07 03:41:25
+##  4 115884457102~ for iPh~ Will be going to Dayton, Ohi~ 2019-08-06 20:57:30
+##  5 115879773548~ for iPh~ ...in 2020.” Lou Dobbs state~ 2019-08-06 17:51:24
+##  6 115879773439~ for iPh~ ... are NOT planning to ille~ 2019-08-06 17:51:23
+##  7 115879773282~ for iPh~ .@sundarpichai of Google was~ 2019-08-06 17:51:23
+##  8 115877684631~ for iPh~ Thank you @JimCramer @CNBC! ~ 2019-08-06 16:28:23
+##  9 115877596775~ for iPh~ Thank you Mr. Wonderful, I l~ 2019-08-06 16:24:54
+## 10 115871854851~ for iPh~ As they have learned in the ~ 2019-08-06 12:36:44
+## # ... with 3,181 more rows
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{dft}\OperatorTok{$}\NormalTok{source[dft}\OperatorTok{$}\NormalTok{source }\OperatorTok{==}\StringTok{ 'for iPad'}\NormalTok{] <-}\StringTok{'iPad'}
+\NormalTok{dft}\OperatorTok{$}\NormalTok{source[dft}\OperatorTok{$}\NormalTok{source }\OperatorTok{==}\StringTok{ 'for iPhone'}\NormalTok{] <-}\StringTok{'iPhone'}
+\NormalTok{dft}\OperatorTok{$}\NormalTok{source[dft}\OperatorTok{$}\NormalTok{source }\OperatorTok{==}\StringTok{ 'for Android'}\NormalTok{] <-}\StringTok{'Android'}
+\NormalTok{dft}\OperatorTok{$}\NormalTok{source<-}\StringTok{ }\KeywordTok{gsub}\NormalTok{(}\StringTok{" "}\NormalTok{,}\StringTok{""}\NormalTok{,dft}\OperatorTok{$}\NormalTok{source)}
+
+\NormalTok{df_token <-}\StringTok{ }\NormalTok{dft }\OperatorTok{%>%}\StringTok{ }\KeywordTok{filter}\NormalTok{(}\OperatorTok{!}\KeywordTok{str_detect}\NormalTok{(text, }\StringTok{'^"'}\NormalTok{)) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{mutate}\NormalTok{(}\DataTypeTok{text =} \KeywordTok{str_replace_all}\NormalTok{(text, }\StringTok{"https://t.co/[A-Za-z}\CharTok{\textbackslash{}\textbackslash{}}\StringTok{d]+|&amp;"}\NormalTok{, }\StringTok{""}\NormalTok{)) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{unnest_tokens}\NormalTok{(word, text, }\DataTypeTok{token =} \StringTok{"regex"}\NormalTok{, }\DataTypeTok{pattern =}\NormalTok{ reg) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{filter}\NormalTok{(}\OperatorTok{!}\NormalTok{word }\OperatorTok{%in%}\StringTok{ }\NormalTok{stop_words}\OperatorTok{$}\NormalTok{word,}
+         \KeywordTok{str_detect}\NormalTok{(word, }\StringTok{"[a-z]"}\NormalTok{))}
+
+\KeywordTok{bind_rows}\NormalTok{(}\DataTypeTok{Bernie =}\NormalTok{ tweet_words, }\DataTypeTok{Trump =}\NormalTok{ df_token, }\DataTypeTok{.id =} \StringTok{"person"}\NormalTok{) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{count}\NormalTok{(word, person) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{acast}\NormalTok{(word }\OperatorTok{~}\StringTok{ }\NormalTok{person, }\DataTypeTok{value.var =} \StringTok{"n"}\NormalTok{, }\DataTypeTok{fill =} \DecValTok{0}\NormalTok{) }\OperatorTok{%>%}
+\StringTok{  }\KeywordTok{comparison.cloud}\NormalTok{(}\DataTypeTok{max.words =} \DecValTok{100}\NormalTok{, }\DataTypeTok{colors =} \KeywordTok{c}\NormalTok{(}\StringTok{"blue"}\NormalTok{, }\StringTok{"red"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning in comparison.cloud(., max.words = 100, colors = c("blue", "red")):
+## @berniesanders could not be fit on page. It will not be plotted.
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in comparison.cloud(., max.words = 100, colors = c("blue", "red")):
+## @realdonaldtrump could not be fit on page. It will not be plotted.
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in comparison.cloud(., max.words = 100, colors = c("blue", "red")):
+## country could not be fit on page. It will not be plotted.
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in comparison.cloud(., max.words = 100, colors = c("blue", "red")):
+## million could not be fit on page. It will not be plotted.
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in comparison.cloud(., max.words = 100, colors = c("blue", "red")):
+## education could not be fit on page. It will not be plotted.
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in comparison.cloud(., max.words = 100, colors = c("blue", "red")):
+## minimum could not be fit on page. It will not be plotted.
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in comparison.cloud(., max.words = 100, colors = c("blue", "red")):
+## climate could not be fit on page. It will not be plotted.
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in comparison.cloud(., max.words = 100, colors = c("blue", "red")):
+## industry could not be fit on page. It will not be plotted.
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in comparison.cloud(., max.words = 100, colors = c("blue", "red")):
+## millions could not be fit on page. It will not be plotted.
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in comparison.cloud(., max.words = 100, colors = c("blue", "red")):
+## profits could not be fit on page. It will not be plotted.
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in comparison.cloud(., max.words = 100, colors = c("blue", "red")):
+## corporations could not be fit on page. It will not be plotted.
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in comparison.cloud(., max.words = 100, colors = c("blue", "red")):
+## progressive could not be fit on page. It will not be plotted.
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in comparison.cloud(., max.words = 100, colors = c("blue", "red")):
+## political could not be fit on page. It will not be plotted.
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in comparison.cloud(., max.words = 100, colors = c("blue", "red")):
+## vermont could not be fit on page. It will not be plotted.
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in comparison.cloud(., max.words = 100, colors = c("blue", "red")):
+## billionaires could not be fit on page. It will not be plotted.
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in comparison.cloud(., max.words = 100, colors = c("blue", "red")):
+## create could not be fit on page. It will not be plotted.
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in comparison.cloud(., max.words = 100, colors = c("blue", "red")):
+## transform could not be fit on page. It will not be plotted.
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in comparison.cloud(., max.words = 100, colors = c("blue", "red")):
+## obstruction could not be fit on page. It will not be plotted.
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in comparison.cloud(., max.words = 100, colors = c("blue", "red")):
+## @foxandfriends could not be fit on page. It will not be plotted.
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in comparison.cloud(., max.words = 100, colors = c("blue", "red")):
+## support could not be fit on page. It will not be plotted.
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in comparison.cloud(., max.words = 100, colors = c("blue", "red")):
+## social could not be fit on page. It will not be plotted.
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in comparison.cloud(., max.words = 100, colors = c("blue", "red")):
+## companies could not be fit on page. It will not be plotted.
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in comparison.cloud(., max.words = 100, colors = c("blue", "red")):
+## family could not be fit on page. It will not be plotted.
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in comparison.cloud(., max.words = 100, colors = c("blue", "red")):
+## united could not be fit on page. It will not be plotted.
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in comparison.cloud(., max.words = 100, colors = c("blue", "red")):
+## #medicareforall could not be fit on page. It will not be plotted.
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in comparison.cloud(., max.words = 100, colors = c("blue", "red")):
+## walmart could not be fit on page. It will not be plotted.
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in comparison.cloud(., max.words = 100, colors = c("blue", "red")):
+## donald could not be fit on page. It will not be plotted.
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in comparison.cloud(., max.words = 100, colors = c("blue", "red")):
+## democratic could not be fit on page. It will not be plotted.
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in comparison.cloud(., max.words = 100, colors = c("blue", "red")):
+## nation could not be fit on page. It will not be plotted.
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in comparison.cloud(., max.words = 100, colors = c("blue", "red")):
+## #maga could not be fit on page. It will not be plotted.
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in comparison.cloud(., max.words = 100, colors = c("blue", "red")):
+## crooked could not be fit on page. It will not be plotted.
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in comparison.cloud(., max.words = 100, colors = c("blue", "red")):
+## debt could not be fit on page. It will not be plotted.
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in comparison.cloud(., max.words = 100, colors = c("blue", "red")):
+## planet could not be fit on page. It will not be plotted.
+\end{verbatim}
+
+\includegraphics{BernTweet_files/figure-latex/unnamed-chunk-1-18.pdf}
+
+
+\end{document}

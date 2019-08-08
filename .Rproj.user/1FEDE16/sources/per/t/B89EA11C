@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1564626114746.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3128537004",
+    "id" : "B89EA11C",
+    "lastKnownWriteTime" : 1564732195,
+    "last_content_update" : 1564732195092,
+    "path" : "C:/Users/vanea/Desktop/Projects/Twitter/DrumpfTweet/tweet2.R",
+    "project_path" : "tweet2.R",
+    "properties" : {
+        "cursorPosition" : "11,38",
+        "scrollLine" : "0",
+        "tempName" : "Untitled2"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
