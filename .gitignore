@@ -1,6 +1,7 @@
+.Rproj.user
 .RData
 .Rhistory
-.txt
-.png
+*.txt
+*.png
 
 /Bernie_Tweet_files
