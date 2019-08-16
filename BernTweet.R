@@ -10,15 +10,19 @@ library(tidytext)
 
 ## get user timeline
 tmls <- get_timelines('BernieSanders', n = 3200)
-tweets <- tmls %>% select(status_id, source, text, created_at) 
+glimpse(tmls)
+tweets <- tmls %>% select(status_id, source, text, created_at, favorite_count, retweet_count) %>%
+  filter(!tmls$is_retweet)
 tweets <- mutate(tweets,source =ifelse(str_detect(tweets$source,'(?<=Twitter )[^.]*')==TRUE,str_match(tweets$source, '(?<=Twitter )[^.]*'), tweets$source))
-tweets
+
+#rename values for source column
 tweets$source[tweets$source == 'for iPad'] <-'iPad'
 tweets$source[tweets$source == 'for iPhone'] <-'iPhone'
 tweets$source[tweets$source == 'for Android'] <-'Android'
 tweets$source<- gsub(" ","",tweets$source)
 tweets_count <-tweets %>% count(source)
 tweets_count
+tweets
 
 #bar plot
 tweets_count %>% ggplot(aes(y =n ,x =source, fill = source)) + 
@@ -26,7 +30,7 @@ tweets_count %>% ggplot(aes(y =n ,x =source, fill = source)) +
 
 #hourly
 tweets %>%
-  count(source, hour=hour(with_tz(created_at, "EST")))%>%
+  count(source, hour=hour(with_tz(created_at, "EST"))) %>%
   mutate(percent = n / sum(n)) %>%
   ggplot(aes(hour, percent, color = source)) +
   geom_line() +
@@ -34,7 +38,6 @@ tweets %>%
   labs(x = "Hour of day (EST)",
        y = "% of tweets",
        color = "")
-tweets
 
 #quotes
 tweet_picture_counts <- tweets %>%
@@ -43,11 +46,28 @@ tweet_picture_counts <- tweets %>%
     source, 
     picture = ifelse(
       str_detect(text, "t.co"),"Picture/link", "No picture/link"))
-
+# bar plot for picture/no picture
 ggplot(tweet_picture_counts, aes(source, n, fill = picture)) +
   geom_bar(stat = "identity", position = "dodge") +
   labs(x = "", y = "Number of tweets", fill = "")
 
+## hashtags
+tweet_hashtag_counts <- tweets %>%
+  unnest_tokens(word,text, token = 'tweets') %>%
+  count(source, hashtag =ifelse(
+    str_detect(word,'^#'), 'yes', 'no')) 
+
+ggplot(tweet_hashtag_counts, aes(source, n, fill=hashtag)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(x = "", y = "Number of tweets", fill = "") 
+
+tweets %>% 
+  unnest_tokens(word,text, token = 'tweets') %>%
+  filter(str_detect(word, '^#')) %>%
+  count(word, sort = TRUE) %>% head(5)
+
+
+glimpse(tweets)
 
 #word sentiment
 ##separate into individual tokens
@@ -59,8 +79,9 @@ tweet_words <- tweets %>%
   filter(!word %in% stop_words$word,
          str_detect(word, "[a-z]"))
 tweet_words
-common_words <- tweet_words %>% count(word, sort=TRUE) %>% head(.,45)
-common_words %>% ggplot(aes(y =n ,x =reorder(word,+n))) + 
+common_words <- tweet_words %>% count(word, sort=TRUE) %>% head(.,20)
+common_words %>% ggplot(aes(y =n ,x =reorder(word,+n))) +  
+  ylab("Occurrences") + xlab('Word') +
   geom_bar(width = 0.7, stat = "identity") + coord_flip()
 
 tweet_words %>%
@@ -83,7 +104,11 @@ total_words <- tweet_words_count %>%
 total_words
 
 tweet_words_count <- left_join(tweet_words_count, total_words)
-tweet_words_count
+
+tweet_words_count %>% filter(source %in% c('iPhone','TweetDeck')) %>% head(50) %>%
+  ggplot(aes(y =n ,x =reorder(word,+n), fill=source)) + 
+  geom_bar(width = 0.7, stat = "identity") + coord_flip()
+
 
 tweet_words_count <- tweet_words_count %>%
   bind_tf_idf(word, source, n)
@@ -99,7 +124,7 @@ tweet_important <- tweet_words_count %>%
 tweet_important
 
 tweet_important %>%
-  head(50)%>%
+  head(30)%>%
   group_by(source) %>%
   slice(1:15) %>%
   ggplot(aes(word, tf_idf, fill = source)) +
@@ -151,7 +176,7 @@ tweet_words %>%
 ### eight emotion (anger, fear, anticipation, trust, surprise, sadness,
 ### joy, and disgust) and two sentiment (negative and positive)
 
-wd <- "C:\\Users\\vanea\\Desktop\\Projects\\Twitter\\DrumpfTweet"
+wd <- "C:\\Users\\van\\Desktop\\Projects\\Twitter-Analysis"
 emolex <- read_table2(
   file.path(wd,"NRC-emotion-lexicon-wordlevel-alphabetized-v0.92.txt"),
   col_names = FALSE,
@@ -164,7 +189,7 @@ nrc <-emolex %>%
   select(word, emotion)
 
 
-#hourly
+#hourly 
 tweet_words %>% 
   inner_join(nrc, by = "word")%>%
   count(emotion, hour=hour(with_tz(created_at, "EST"))) %>%
@@ -203,6 +228,19 @@ tweet_words %>%
 tweet_words%>% 
   inner_join(nrc, by = "word")  %>%
   count(emotion, month=date(created_at))%>%
+  mutate(percent = n / sum(n)) %>%
+  ggplot(aes(month, percent, color = emotion)) +
+  geom_line() +
+  scale_y_continuous(labels = percent_format()) +
+  labs(x = "Monthly (EST)",
+       y = "% of tweets",
+       color = "") 
+
+# after july 2019
+tweet_words%>% 
+  inner_join(nrc, by = "word")  %>%
+  count(emotion, month=date(created_at)) %>%
+  filter(month > as.Date('2019-08-01')) %>%
   mutate(percent = n / sum(n)) %>%
   ggplot(aes(month, percent, color = emotion)) +
   geom_line() +
@@ -252,7 +290,7 @@ tweet_ratios %>%
   facet_wrap(~ emotion, scales = "free", nrow = 2) +
   geom_bar(stat = "identity") +
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-  labs(x = "", y = "Android / iPhone log ratio") +
+  labs(x = "", y = "WebClient / iPhone log ratio") +
   scale_fill_manual(name = "", labels = c("WebClient", "iPhone"),
                     values = c("red", "lightblue"))
 
@@ -272,6 +310,7 @@ tweet_important %>%
   scale_fill_manual(name = "", labels = c("WebClient", "iPhone",'MediaStudio',
                           'Periscope', 'TweetDeck','VITAppforiOS','WebApp'),
                     values = c("red", "lightblue","pink", "purple", "orange", 'yellow', "blue"))
+
 tweet_important %>%
   inner_join(nrc, by = "word") %>%
   filter(!emotion %in% c("positive", "negative")) %>%
