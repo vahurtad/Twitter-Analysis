@@ -6,6 +6,7 @@ output: github_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+Libraries needed:
 ```{r message=FALSE, warning=FALSE}
 library(rtweet)
 library(stringr)
@@ -20,11 +21,11 @@ library(tidytext)
 
 ```{r warning=FALSE}
 tmls <- get_timelines('BernieSanders', n = 3200)
-tweets <- tmls %>% select(status_id, source, text, created_at) 
+tweets <- tmls %>% select(status_id, source, text, created_at, favorite_count, retweet_count) 
 tweets <- mutate(tweets,source =ifelse(str_detect(tweets$source,'(?<=Twitter )[^.]*')==TRUE,str_match(tweets$source, '(?<=Twitter )[^.]*'), tweets$source))
 ```
 
-## Show source of tweets
+## Show source of tweets from \@BernieSanders
 
 ```{r, echo=FALSE}
 tweets$source[tweets$source == 'for iPad'] <-'iPad'
@@ -36,7 +37,7 @@ tweets_count
 ```
 
 ## Bar plot
-BernieSanders Web Client is the most used source to make tweets, Tweet Deck coming in second and iPhone coming in third place.
+Web Client is the most used source to make tweets, Tweet Deck coming in second and iPhone coming in third place.
 
 ```{r,echo=FALSE}
 tweets_count %>% ggplot(aes(y =n ,x =source, fill = source)) + 
@@ -61,20 +62,29 @@ tweets %>%
        color = "")
 ```
 
-## Pictures
+## Favorite Tweets
+According to users, these are BernieSanders favorites tweets:
 
-```{r, echo=FALSE}
-tweet_picture_counts <- tweets %>%
-  filter(!str_detect(text, '^"')) %>%
-  count(
-    source, 
-    picture = ifelse(
-      str_detect(text, "t.co"),"Picture/link", "No picture/link"))
+```{r}
+#favorites
+print('Most favorited Tweet:')
+tweets[which.max(tweets$favorite_count), ]$text 
+print('Least favorited Tweet:')
+tweets[which.min(tweets$favorite_count), ]$text
+fav_tweets <- tweets %>% filter(favorite_count > mean(tweets$favorite_count))
+count(fav_tweets)
 
-ggplot(tweet_picture_counts, aes(source, n, fill = picture)) +
-  geom_bar(stat = "identity", position = "dodge") +
-  labs(x = "", y = "Number of tweets", fill = "")
+
+#retweet
+print('Most retweeted Tweet:')
+tweets[which.max(tweets$retweet_count), ]$text
+print('Least retweeted Tweet:')
+tweets[which.min(tweets$retweet_count), ]$text
+re_tweets <- tweets %>% filter(retweet_count > mean(tweets$retweet_count))
+count(re_tweets)
+
 ```
+
 ## Top 5 hashtags used
 ```{r, echo=FALSE}
 tweets %>% 
@@ -98,6 +108,24 @@ common_words %>% ggplot(aes(y =n ,x =reorder(word,+n))) +
   ylab("Occurrences") + xlab('Word') +
   geom_bar(width = 0.7, stat = "identity") + coord_flip()
 ```
+
+What about the top favorite tweets?
+```{r , echo=FALSE}
+
+
+fav_words <- fav_tweets %>%
+  filter(!str_detect(text, '^"')) %>%
+  mutate(text = str_replace_all(text, "https://t.co/[A-Za-z\\d]+|&amp;", "")) %>%
+  unnest_tokens(word, text, token = "regex", pattern = reg) %>%
+  filter(!word %in% stop_words$word,
+         str_detect(word, "[a-z]"))
+common_words <- fav_words %>% count(word, sort=TRUE) %>% head(.,20)
+common_words %>% ggplot(aes(y =n ,x =reorder(word,+n))) +  
+  ylab("Occurrences") + xlab('Word') +
+  geom_bar(width = 0.7, stat = "identity") + coord_flip()
+
+```
+
 ## Term Frequency–Inverse Document Frequency,
 ```{r, echo=FALSE}
 tweet_words_count <- tweet_words %>%
@@ -133,17 +161,16 @@ tweet_important %>%
        x = NULL, y = "tf-idf") +
   coord_flip()
 ```
+
 ## Sentiment analysis
-## 8 emotions (anger, fear, anticipation, trust, surprise, sadness, joy, and disgust) 
-## 2 sentiments (negative and positive)
-### emolex downloaded from http://saifmohammad.com/Lexicons/
-We are looking at the percentage of tweets where each sentiment is shown during the  hour of the day
+8 emotions (anger, fear, anticipation, trust, surprise, sadness, joy, and disgust) 
+2 sentiments (negative and positive)
+**emolex downloaded from http://saifmohammad.com/Lexicons/**
+We are looking at the percentage of tweets where each sentiment is shown during the  hour of the day.
 A positive sentiment is the highest percentage of tweets
 
 ```{r, echo=FALSE}
-
-
-wd <- "C:\\Users\\van\\Desktop\\Projects\\Twitter-Analysis"
+wd <- getwd()
 emolex <- read_table2(
   file.path(wd,"NRC-emotion-lexicon-wordlevel-alphabetized-v0.92.txt"),
   col_names = FALSE,
@@ -212,14 +239,56 @@ tweet_words%>%
        color = "") 
 ```
 
-## Better?
+## Favorites?
 ```{r, echo=FALSE}
-tweet_words%>% 
+fav_words %>% 
+  inner_join(nrc, by = "word")%>%
+  count(emotion, hour=hour(with_tz(created_at, "EST"))) %>%
+  mutate(percent = n / sum(n)) %>%
+  ggplot(aes(hour, percent, color = emotion)) +
+  geom_line() + geom_path(size = 1) +
+  scale_y_continuous(labels = percent_format()) +
+  labs(x = "Hour of day (EST)",
+       y = "% of tweets",
+       color = "")
+
+#weekly
+fav_words %>% 
+  inner_join(nrc, by = "word")%>%
+  count(emotion, week=week(with_tz(created_at, "EST"))) %>%
+  mutate(percent = n / sum(n)) %>%
+  ggplot(aes(week, percent, color = emotion)) +
+  geom_line() + geom_path(size = 1) +
+  scale_y_continuous(labels = percent_format()) +
+  labs(x = "Week (EST)",
+       y = "% of tweets",
+       color = "")
+
+#monthly
+fav_words%>% 
   inner_join(nrc, by = "word")  %>%
   count(emotion, month=date(created_at))%>%
   mutate(percent = n / sum(n)) %>%
-  ggplot(aes(y=percent ,x =emotion, fill=month)) + 
-  geom_bar(width = 0.7, stat = "identity") + coord_flip()
+  ggplot(aes(month, percent, color = emotion)) +
+  geom_line() +
+  scale_y_continuous(labels = percent_format()) +
+  labs(x = "Monthly (EST)",
+       y = "% of tweets",
+       color = "") 
+
+fav_words%>% 
+  inner_join(nrc, by = "word")  %>%
+  count(emotion, month=date(created_at)) %>%
+  filter(month > as.Date('2019-08-01')) %>%
+  mutate(percent = n / sum(n)) %>%
+  ggplot(aes(month, percent, color = emotion)) +
+  geom_line() +  geom_path(size = 1) +
+  scale_y_continuous(labels = percent_format()) +
+  labs(x = "Monthly (EST)",
+       y = "% of tweets",
+       color = "") 
+
+
 ```
 
 
@@ -257,74 +326,38 @@ by_source_sentiment %>%
 
 ```
 
-##
-```{r, echo=FALSE}
-tweet_important %>%
-  inner_join(nrc, by = "word") %>%
-  filter(!emotion %in% c("positive", "negative")) %>%
-  mutate(emotion = reorder(emotion, -tf_idf),
-         word = reorder(word, -tf_idf)) %>%
-  group_by(emotion) %>%
-  top_n(10, tf_idf) %>%
-  ungroup() %>%
-  ggplot(aes(word, tf_idf, fill = source)) +
-  facet_wrap(~ emotion, scales = "free", nrow = 4) +
-  geom_bar(stat = "identity") +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-  labs(x = "", y = "tf-idf") +
-  scale_fill_manual(name = "", labels = c("WebClient", "iPhone",'MediaStudio',
-                          'Periscope', 'TweetDeck','VITAppforiOS','WebApp'),
-                    values = c("red", "lightblue","pink", "purple", "orange", 'yellow', "blue"))
-
-
-tweet_important %>%
-  inner_join(nrc, by = "word") %>%
-  filter(!emotion %in% c("positive", "negative")) %>%
-  filter(source %in% c("WebClient", "iPhone")) %>%
-  mutate(emotion = reorder(emotion, -tf_idf),
-         word = reorder(word, -tf_idf)) %>%
-  group_by(emotion) %>%
-  top_n(10, tf_idf) %>%
-  ungroup() %>%
-  ggplot(aes(word, tf_idf, fill = source)) +
-  facet_wrap(~ emotion, scales = "free", nrow = 4) +
-  geom_bar(stat = "identity") +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-  labs(x = "", y = "tf-idf") +
-  scale_fill_manual(name = "", labels = c("WebClient", "iPhone"),
-                    values = c("red", "lightblue"))
-
-
-```
-
-
+Compared to favorites, no huge difference except tweets from Periscope source are less liked.
 
 ```{r, echo=FALSE}
+sources_fav <- fav_words %>%
+  group_by(source) %>%
+  mutate(total_words = n()) %>%
+  ungroup() %>%
+  distinct(status_id, source, total_words)
 
-#compare
-library(reshape2)
-library(wordcloud)
+sources_fav[order(sources$total_words, decreasing = TRUE),]
 
-donfrump <- get_timelines('realDonaldTrump', n = 3200)
-dft <- donfrump %>% select(status_id, source, text, created_at) 
-dft <- mutate(dft,source =ifelse(str_detect(dft$source,'(?<=Twitter )[^.]*')==TRUE,str_match(dft$source, '(?<=Twitter )[^.]*'), dft$source))
+by_source_sentiment_fav <- fav_words %>%
+  inner_join(nrc, by = "word") %>%
+  count(emotion, status_id) %>%
+  ungroup() %>%
+  complete(emotion, status_id, fill = list(n = 0)) %>%
+  inner_join(sources, "status_id") %>%
+  group_by(source, emotion, total_words) %>%
+  summarize(words = sum(n)) %>%
+  ungroup()
 
-dft$source[dft$source == 'for iPad'] <-'iPad'
-dft$source[dft$source == 'for iPhone'] <-'iPhone'
-dft$source[dft$source == 'for Android'] <-'Android'
-dft$source<- gsub(" ","",dft$source)
+head(by_source_sentiment_fav)
 
-df_token <- dft %>% filter(!str_detect(text, '^"')) %>%
-  mutate(text = str_replace_all(text, "https://t.co/[A-Za-z\\d]+|&amp;", "")) %>%
-  unnest_tokens(word, text, token = "regex", pattern = reg) %>%
-  filter(!word %in% stop_words$word,
-         str_detect(word, "[a-z]"))
+by_source_sentiment_fav %>%
+  ggplot(aes(source, words,fill=emotion)) + 
+  geom_bar(width = 0.7, stat = "identity") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
-bind_rows(Bernie = tweet_words, Trump = df_token, .id = "person") %>%
-  count(word, person) %>%
-  acast(word ~ person, value.var = "n", fill = 0) %>%
-  comparison.cloud(max.words = 100, colors = c("blue", "red"))
-
+by_source_sentiment_fav %>%
+  ggplot(aes(emotion, words,fill=source)) + 
+  geom_bar(width = 0.7, stat = "identity") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
 ```
 
 

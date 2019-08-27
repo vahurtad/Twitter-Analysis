@@ -6,6 +6,8 @@ library(tidyverse)
 library(lubridate)
 library(scales)
 library(tidytext)
+library(ggplot2)
+library(ggmap)
 
 
 ## get user timeline
@@ -23,6 +25,21 @@ tweets$source<- gsub(" ","",tweets$source)
 tweets_count <-tweets %>% count(source)
 tweets_count
 tweets
+
+#favorites
+tweets[which.max(tweets$favorite_count), ]$text
+
+tweets[which.min(tweets$favorite_count), ]$text
+fav_tweets <- tweets %>% filter(favorite_count > mean(tweets$favorite_count))
+fav_tweets$text
+
+
+#retweet
+tweets[which.max(tweets$retweet_count), ]$text
+tweets[which.min(tweets$retweet_count), ]$text
+re_tweets <- tweets %>% filter(retweet_count > mean(tweets$retweet_count))
+re_tweets$text
+
 
 #bar plot
 tweets_count %>% ggplot(aes(y =n ,x =source, fill = source)) + 
@@ -175,8 +192,8 @@ tweet_words %>%
 #website down, download from http://saifmohammad.com/Lexicons/
 ### eight emotion (anger, fear, anticipation, trust, surprise, sadness,
 ### joy, and disgust) and two sentiment (negative and positive)
-
-wd <- "C:\\Users\\van\\Desktop\\Projects\\Twitter-Analysis"
+wd <- getwd()
+#wd <- "C:\\Users\\van\\Desktop\\Projects\\Twitter-Analysis"
 emolex <- read_table2(
   file.path(wd,"NRC-emotion-lexicon-wordlevel-alphabetized-v0.92.txt"),
   col_names = FALSE,

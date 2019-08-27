@@ -2,4 +2,5 @@
 .RData
 .Rhistory
 *.txt
-*.png
+.httr-oauth
+.xlsx
